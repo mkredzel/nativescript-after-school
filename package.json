@@ -3,6 +3,10 @@
     "license": "SEE LICENSE IN <your-license-filename>",
     "readme": "NativeScript Application",
     "repository": "<fill-your-repository-here>",
+    "scripts": {
+        "build": "tns build android",
+        "run": "tns run android"
+    },
     "dependencies": {
         "@nativescript/core": "7.0.0",
         "@nativescript/theme": "2.3.3",
@@ -15,6 +19,7 @@
         "nativescript-background-http": "4.2.1",
         "nativescript-camera": "4.5.0",
         "nativescript-cardview": "^3.2.0",
+        "nativescript-drop-down": "^5.0.6",
         "nativescript-geolocation": "5.1.0",
         "nativescript-image": "3.0.1",
         "nativescript-imagepicker": "7.1.0",
@@ -29,7 +34,7 @@
         "nativescript-ui-dataform": "6.0.0",
         "nativescript-ui-gauge": "6.0.0",
         "nativescript-ui-listview": "8.0.1",
-        "nativescript-ui-sidedrawer": "^8.0.1",
+        "nativescript-ui-sidedrawer": "^9.0.3",
         "nativescript-vue": "^2.8.3",
         "nativescript-vue-navigator": "^1.2.0",
         "sass": "^1.32.5",

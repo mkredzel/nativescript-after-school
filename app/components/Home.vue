@@ -10,8 +10,20 @@
         <Label text=" After School" class="title"></Label>
       </StackLayout>
     </ActionBar>
+
     <ScrollView>
       <StackLayout v-if="rowCount > 0">
+        <Button
+          text="Shopping Cart"
+          class="btn m-t-20 add-button"
+          @tap="openShoppingCart()"
+        />
+        <SearchBar
+          hint="Search for classes"
+          v-model="search"
+          @change="items()"
+        >
+        </SearchBar>
         <GridLayout rows="*" columns="*, *" v-for="i in rowCount" :key="i">
           <CardView
             class="card"
@@ -19,51 +31,62 @@
             col="0"
             elevation="50"
             v-if="
-              Items[(i - 1) * itemsPerRow] && Items[(i - 1) * itemsPerRow].topic
+              items[(i - 1) * itemsPerRow] && items[(i - 1) * itemsPerRow].topic
             "
-            @tap="seeDetails(Items[(i - 1) * itemsPerRow])"
           >
             <GridLayout
               class="card-layout"
-              rows="200, auto,auto,auto,auto,auto"
+              rows="200, auto,auto,auto,auto,auto,auto"
               columns="*, *, *"
             >
               <Image
-                v-if="Items[(i - 1) * itemsPerRow].imageURL"
-                :src="Items[(i - 1) * itemsPerRow].imageURL"
+                v-if="items[(i - 1) * itemsPerRow].imageURL"
+                :src="items[(i - 1) * itemsPerRow].imageURL"
                 stretch="aspectFill"
                 colSpan="3"
                 row="0"
               />
               <Label
-                :text="Items[(i - 1) * itemsPerRow].topic"
+                :text="items[(i - 1) * itemsPerRow].topic"
                 class="topic"
                 row="1"
                 colSpan="3"
               />
               <Label
-                :text="Items[(i - 1) * itemsPerRow].location"
+                :text="items[(i - 1) * itemsPerRow].location"
                 class="location"
                 row="2"
                 colSpan="3"
               />
               <Label
-                :text="Items[(i - 1) * itemsPerRow].date"
+                :text="items[(i - 1) * itemsPerRow].date"
                 class="date"
                 row="3"
                 colSpan="3"
               />
               <Label
-                :text="'£' + Items[(i - 1) * itemsPerRow].price + '/month'"
+                :text="'£' + items[(i - 1) * itemsPerRow].price + '/month'"
                 class="price"
                 row="4"
                 colSpan="3"
               />
-              <Button
+              <Label
+                :text="
+                  'Available Spaces: ' +
+                  items[(i - 1) * itemsPerRow].availableSpaces
+                "
+                class="spaces"
                 row="5"
                 colSpan="3"
+              />
+              <Button
+                row="6"
+                colSpan="3"
+                :isEnabled="items[(i - 1) * itemsPerRow].availableSpaces > 0"
                 text="Add To Cart"
-                @tap="addItem(Items[(i - 1) * itemsPerRow])"
+                @tap="
+                  addItem(items[(i - 1) * itemsPerRow], (i - 1) * itemsPerRow)
+                "
                 class="btn m-t-20 add-button"
               />
             </GridLayout>
@@ -74,52 +97,68 @@
             col="1"
             elevation="50"
             v-if="
-              Items[(i - 1) * itemsPerRow + 1] &&
-              Items[(i - 1) * itemsPerRow + 1].topic
+              items[(i - 1) * itemsPerRow + 1] &&
+              items[(i - 1) * itemsPerRow + 1].topic
             "
-            @tap="seeDetails(Items[(i - 1) * itemsPerRow + 1])"
           >
             <GridLayout
               class="card-layout"
-              rows="200, auto,auto,auto,auto,auto"
+              rows="200, auto,auto,auto,auto,auto,auto"
               columns="*, *, *"
             >
               <Image
-                v-if="Items[(i - 1) * itemsPerRow + 1].imageURL"
-                :src="Items[(i - 1) * itemsPerRow + 1].imageURL"
+                v-if="items[(i - 1) * itemsPerRow + 1].imageURL"
+                :src="items[(i - 1) * itemsPerRow + 1].imageURL"
                 stretch="aspectFill"
                 colSpan="3"
                 row="0"
               />
               <Label
-                :text="Items[(i - 1) * itemsPerRow + 1].topic"
+                :text="items[(i - 1) * itemsPerRow + 1].topic"
                 class="topic"
                 row="1"
                 colSpan="3"
               />
               <Label
-                :text="Items[(i - 1) * itemsPerRow + 1].location"
+                :text="items[(i - 1) * itemsPerRow + 1].location"
                 class="location"
                 row="2"
                 colSpan="3"
               />
               <Label
-                :text="Items[(i - 1) * itemsPerRow + 1].date"
+                :text="items[(i - 1) * itemsPerRow + 1].date"
                 class="date"
                 row="3"
                 colSpan="3"
               />
               <Label
-                :text="'£' + Items[(i - 1) * itemsPerRow + 1].price + '/month'"
+                :text="'£' + items[(i - 1) * itemsPerRow + 1].price + '/month'"
                 class="price"
                 row="4"
                 colSpan="3"
               />
-              <Button
+              <Label
+                :text="
+                  'Available Spaces: ' +
+                  items[(i - 1) * itemsPerRow + 1].availableSpaces
+                "
+                class="spaces"
                 row="5"
                 colSpan="3"
+              />
+              <Button
+                row="6"
+                colSpan="3"
                 text="Add To Cart"
-                @tap="addItem(Items[(i - 1) * itemsPerRow + 1])"
+                :isEnabled="
+                  items[(i - 1) * itemsPerRow + 1].availableSpaces > 0
+                "
+                @tap="
+                  addItem(
+                    items[(i - 1) * itemsPerRow + 1],
+                    (i - 1) * itemsPerRow + 1
+                  )
+                "
                 class="btn m-t-20 add-button"
               />
             </GridLayout>
@@ -131,42 +170,55 @@
 </template>
 
 <script>
+import Cart from "./Cart";
+
 export default {
   data() {
     return {
-      Items: [],
       itemsPerRow: 2,
+      cart: [],
+      search: ""
     };
   },
   computed: {
-    rowCount: function () {
-      return Math.ceil(this.Items.length / this.itemsPerRow);
+    rowCount() {
+      let vue = this;
+      return Math.ceil(vue.items.length / this.itemsPerRow);
     },
+    items() {
+      console.log(this.search)
+      if (this.search) {
+        let items = this.$store.getters.items;
+        return items.filter((item) => {
+          return this.search
+            .split(" ")
+            .every((search) => item.topic.toLowerCase().includes(search));
+        });
+      } else {
+        return this.$store.getters.items;
+      }
+    },
+
   },
   methods: {
-    seeDetails(item) {
-      console.log("Showing detailed view for: ");
-      console.dir(item);
+    addItem(item, index) {
+      let vue = this;
+      vue.items[index].availableSpaces--;
+
+      vue.$store.state.cart.push({
+        topic: item.topic,
+        price: item.price,
+        img: item.imageURL,
+      });
     },
-    addItem(item) {
-      console.log("Adding item:");
-      console.dir(item);
+    openShoppingCart() {
+      this.$navigateTo(Cart);
     },
   },
-  created: function () {
-    let vue = this;
-    fetch("https://after-school-server.herokuapp.com/collection/lessons").then(
-      (response) => {
-        response
-          .json()
-          .then(function (json) {
-            vue.Items = json;
-          })
-          .catch((error) => {
-            alert("Error! " + error.message);
-          });
-      }
-    );
-  },
+  mounted() {
+    if(this.$store.getters.items.length == 0) {
+      this.$store.dispatch("fetchItems");
+    }
+  }
 };
 </script>

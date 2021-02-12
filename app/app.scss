@@ -20,14 +20,14 @@
     border-width: 3;
 }
 
-.topic {
+.topic, .total {
     font-size: 16px;
     text-align: center;
     font-weight: 600;
     padding: 5;
 }
 
-.location, .date, .price {
+.location, .date, .price, .spaces {
     font-size: 12px;
     text-align: center;
     padding: 3;
@@ -46,4 +46,15 @@ Page {
 
 ActionBar {
     background: linear-gradient(to bottom, #8942a8, #ba382f);
+}
+
+StackLayout Button {
+    margin: 5;
+  }
+
+  .basketLabel{
+    font-size: 18px;
+    font-weight: 700;
+    color: #1f1f1f;
+    text-align: center;
 }

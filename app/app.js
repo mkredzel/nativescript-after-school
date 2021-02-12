@@ -1,5 +1,6 @@
 import Vue from "nativescript-vue";
 import Home from "./components/Home";
+import store from "./store";
 
 Vue.registerElement(
   "CardView",
@@ -9,11 +10,6 @@ Vue.registerElement(
 Vue.config.silent = false;
 
 new Vue({
-    template: `
-        <Frame>
-            <Home />
-        </Frame>`,
-    components: {
-      Home
-    }
+  store,
+  render: (h) => h("frame", [h(Home)]),
 }).$start();
