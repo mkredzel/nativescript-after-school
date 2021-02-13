@@ -7,6 +7,12 @@ Vue.registerElement(
   () => require("@nstudio/nativescript-cardview").CardView
 );
 
+Vue.registerElement(
+  "RadSideDrawer",
+  () => require("nativescript-ui-sidedrawer").RadSideDrawer
+);
+
+
 Vue.config.silent = false;
 
 new Vue({
